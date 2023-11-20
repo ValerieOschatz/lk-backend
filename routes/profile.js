@@ -3,13 +3,13 @@ const upload = require('../middlewares/upload');
 
 const profileRoutes = express.Router();
 
-const { getProfile, updatePhoto } = require('../controllers/users');
-// const {
-//   validateRegister,
-//   validateLogin,
-// } = require('../middlewares/validators');
+const { getProfile, updatePhoto, updateProfileInfo } = require('../controllers/users');
+const {
+  validateUpdateProfileInfo,
+} = require('../middlewares/validators');
 
 profileRoutes.get('/me', getProfile);
-profileRoutes.post('/upload', upload.single('image'), updatePhoto);
+profileRoutes.patch('/photo', upload.single('image'), updatePhoto);
+profileRoutes.patch('/info', validateUpdateProfileInfo, updateProfileInfo);
 
 module.exports = profileRoutes;

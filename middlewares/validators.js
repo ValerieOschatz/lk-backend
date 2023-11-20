@@ -16,7 +16,15 @@ const validateLogin = celebrate({
   }),
 });
 
+const validateUpdateProfileInfo = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(20).required(),
+    description: Joi.string().max(30),
+  }),
+});
+
 module.exports = {
   validateRegister,
   validateLogin,
+  validateUpdateProfileInfo,
 };

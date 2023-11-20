@@ -110,6 +110,29 @@ const updatePhoto = async (req, res, next) => {
   }
 };
 
+const updateProfileInfo = async (req, res, next) => {
+  try {
+    const { name, description } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { name, description },
+      { new: true, runValidators: true },
+    );
+    if (!user) {
+      throw new NotFoundError(notFoundUserErrorText);
+    }
+    return res.send(user);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return next(new BadRequestError(badRequestErrorText));
+    }
+    if (err.code === 11000) {
+      return next(new ConflictError(conflictErrorText));
+    }
+    return next(err);
+  }
+};
+
 module.exports = {
   register,
   loginProfile,
@@ -117,4 +140,5 @@ module.exports = {
   getUsers,
   getUser,
   updatePhoto,
+  updateProfileInfo,
 };
