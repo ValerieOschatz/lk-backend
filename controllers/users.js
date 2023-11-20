@@ -67,7 +67,9 @@ const getProfile = async (req, res, next) => {
 
 const getUsers = async (req, res, next) => {
   try {
-    const users = await User.find({});
+    // const users = await User.find({}).filter((item) => item.name.includes(req.query.name));
+    let users = await User.find({});
+    users = users.filter((item) => item.name.includes(req.query.name));
     return res.send(users);
   } catch (err) {
     return next(err);
