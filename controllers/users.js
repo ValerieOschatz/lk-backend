@@ -74,9 +74,25 @@ const getUsers = async (req, res, next) => {
   }
 };
 
+const getUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.query.userId);
+    if (!user) {
+      throw new NotFoundError('Запрашиваемый пользователь не найден');
+    }
+    return res.send(user);
+  } catch (err) {
+    if (err.name === 'CastError') {
+      return next(new BadRequestError('Переданы некорректные данные'));
+    }
+    return next(err);
+  }
+};
+
 module.exports = {
   register,
   loginProfile,
   getProfile,
   getUsers,
+  getUser,
 };
