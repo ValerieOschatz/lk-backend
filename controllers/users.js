@@ -67,7 +67,6 @@ const getProfile = async (req, res, next) => {
 
 const getUsers = async (req, res, next) => {
   try {
-    // const users = await User.find({}).filter((item) => item.name.includes(req.query.name));
     let users = await User.find({});
     users = users.filter((item) => item.name.includes(req.query.name));
     return res.send(users);
@@ -91,10 +90,31 @@ const getUser = async (req, res, next) => {
   }
 };
 
+const updatePhoto = async (req, res, next) => {
+  try {
+    const photo = req.file.path.split('\\').join('/');
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { photo },
+      { new: true, runValidators: true },
+    );
+    if (!user) {
+      throw new NotFoundError('Запрашиваемый пользователь не найден');
+    }
+    return res.send(user);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return next(new BadRequestError('Переданы некорректные данные'));
+    }
+    return next(err);
+  }
+};
+
 module.exports = {
   register,
   loginProfile,
   getProfile,
   getUsers,
   getUser,
+  updatePhoto,
 };
