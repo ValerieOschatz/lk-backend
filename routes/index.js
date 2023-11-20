@@ -1,13 +1,12 @@
 const express = require('express');
 
-const { register } = require('../controllers/users');
-const { validateRegister } = require('../middlewares/validators');
-
 const routes = express.Router();
-// const usersRoutes = require('./users');
+const authRoutes = require('./auth');
+const auth = require('../middlewares/auth');
 const NotFoundError = require('../errors/NotFoundError');
 
-routes.post('/auth/register', validateRegister, register);
+routes.use('/auth', authRoutes);
+routes.use(auth);
 
 routes.use('*', (req, res, next) => {
   next(new NotFoundError('Страница не найдена'));

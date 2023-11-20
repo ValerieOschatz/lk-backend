@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
+const { secretKey } = require('../utils/jwtConfig');
 const {
   CREATED,
   badRequestErrorText,
@@ -29,6 +31,27 @@ const register = async (req, res, next) => {
   }
 };
 
+const loginProfile = async (req, res, next) => {
+  try {
+    const { login, password } = req.body;
+    const user = await User.findUserByCredentials(login, password);
+    const token = jwt.sign(
+      { _id: user._id },
+      secretKey,
+      { expiresIn: '7d' },
+    );
+    return res.cookie('jwt', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 3600000 * 24 * 7,
+    }).send({ token });
+  } catch (err) {
+    return next(err);
+  }
+};
+
 module.exports = {
   register,
+  loginProfile,
 };

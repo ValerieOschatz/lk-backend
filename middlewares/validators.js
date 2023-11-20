@@ -9,6 +9,14 @@ const validateRegister = celebrate({
   }),
 });
 
+const validateLogin = celebrate({
+  body: Joi.object().keys({
+    login: Joi.string().min(2).max(20).regex(regex),
+    password: Joi.string().required(),
+  }),
+});
+
 module.exports = {
   validateRegister,
+  validateLogin,
 };
