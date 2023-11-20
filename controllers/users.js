@@ -7,10 +7,12 @@ const {
   CREATED,
   badRequestErrorText,
   conflictErrorText,
+  notFoundUserErrorText,
 } = require('../utils/data');
 
 const BadRequestError = require('../errors/BadRequestError');
 const ConflictError = require('../errors/ConflictError');
+const NotFoundError = require('../errors/NotFoundError');
 
 const register = async (req, res, next) => {
   try {
@@ -51,7 +53,20 @@ const loginProfile = async (req, res, next) => {
   }
 };
 
+const getProfile = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      throw new NotFoundError(notFoundUserErrorText);
+    }
+    return res.send(user);
+  } catch (err) {
+    return next(err);
+  }
+};
+
 module.exports = {
   register,
   loginProfile,
+  getProfile,
 };
