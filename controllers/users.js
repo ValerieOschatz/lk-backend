@@ -65,8 +65,18 @@ const getProfile = async (req, res, next) => {
   }
 };
 
+const getUsers = async (req, res, next) => {
+  try {
+    const users = await User.find({});
+    return res.send(users);
+  } catch (err) {
+    return next(err);
+  }
+};
+
 module.exports = {
   register,
   loginProfile,
   getProfile,
+  getUsers,
 };
