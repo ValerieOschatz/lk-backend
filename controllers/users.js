@@ -12,10 +12,10 @@ const ConflictError = require('../errors/ConflictError');
 
 const register = async (req, res, next) => {
   try {
-    const { login, password } = req.body;
+    const { login, password, name } = req.body;
     const hash = await bcrypt.hash(password, 10);
-    const user = await User.create({ login, password: hash });
-    const visibleUser = { login: user.login };
+    const user = await User.create({ login, password: hash, name });
+    const visibleUser = { login: user.login, name: user.name };
 
     return res.status(CREATED).send(visibleUser);
   } catch (err) {

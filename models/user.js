@@ -2,21 +2,6 @@ const mongoose = require('mongoose');
 const { regex } = require('../utils/data');
 const checkUser = require('../middlewares/checkUser');
 
-const privatSettingsSchema = new mongoose.Schema({
-  comments: {
-    type: Number,
-    default: 0,
-  },
-  sharing: {
-    type: Number,
-    default: 0,
-  },
-  profile_info: {
-    type: Number,
-    default: 0,
-  },
-});
-
 const userSchema = new mongoose.Schema({
   login: {
     type: String,
@@ -38,21 +23,42 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'поле name обязательное'],
     minlength: [2, 'поле name должно содержать не менее 2 символов'],
-    maxlength: [30, ', поле name должно содержать не более 30 символов'],
-    default: 'TEMP_NAME',
+    maxlength: [20, ', поле name должно содержать не более 30 символов'],
   },
   photo: {
     type: String,
+    default: '',
   },
   description: {
     type: String,
-    minlength: [2, 'поле description должно содержать не менее 2 символов'],
     maxlength: [30, 'поле description должно содержать не более 30 символов'],
+    default: '',
   },
-  // subscribers: {},
-  // subscription_person: {},
+  subscribers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user',
+    default: [],
+  }],
+  subscription_person: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user',
+    default: [],
+  }],
   // subscription_chanels: {},
-  privat_settings: privatSettingsSchema,
+  privat_settings: {
+    comments: {
+      type: Number,
+      default: 0,
+    },
+    sharing: {
+      type: Number,
+      default: 0,
+    },
+    profile_info: {
+      type: Number,
+      default: 0,
+    },
+  },
 });
 
 userSchema.statics.findUserByCredentials = checkUser;
