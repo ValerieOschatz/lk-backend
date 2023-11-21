@@ -32,6 +32,25 @@ const createChanel = async (req, res, next) => {
   }
 };
 
+const getChanelList = async (req, res, next) => {
+  try {
+    let chanels = await Chanel.find({});
+
+    if (req.query.subscriptions) {
+      chanels = chanels.filter((item) => item.subscribers.includes(req.query.subscriptions));
+    }
+
+    if (req.query.name) {
+      chanels = chanels.filter((item) => item.name.includes(req.query.name));
+    }
+
+    return res.send(chanels);
+  } catch (err) {
+    return next(err);
+  }
+};
+
 module.exports = {
   createChanel,
+  getChanelList,
 };

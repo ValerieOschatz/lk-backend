@@ -84,13 +84,13 @@ const getUsers = async (req, res, next) => {
   try {
     let users = await User.find({});
 
-    if (req.query.subscribers) {
-      users = users.filter((item) => item.subscription_person.includes(req.user._id));
+    if (req.query.subscriptions) {
+      users = users.filter((item) => item.subscribers.includes(req.query.subscriptions));
     }
 
-    if (req.query.subscriptions) {
-      const currentUser = await User.findById(req.user._id);
-      users = users.filter((item) => currentUser.subscription_person.includes(item._id));
+    if (req.query.subscribers) {
+      const currentUser = await User.findById(req.query.subscribers);
+      users = users.filter((item) => currentUser.subscribers.includes(item._id));
     }
 
     if (req.query.name) {
@@ -241,8 +241,8 @@ const updatePassword = async (req, res, next) => {
 const subscribe = async (req, res, next) => {
   try {
     const user = await User.findByIdAndUpdate(
-      req.user._id,
-      { $addToSet: { subscription_person: req.query.user_id } },
+      req.query.user_id,
+      { $addToSet: { subscribers: req.user._id } },
       { new: true },
     );
     if (!user) {
@@ -260,8 +260,8 @@ const subscribe = async (req, res, next) => {
 const unsubsxribe = async (req, res, next) => {
   try {
     const user = await User.findByIdAndUpdate(
-      req.user._id,
-      { $pull: { subscription_person: req.query.user_id } },
+      req.query.user_id,
+      { $pull: { subscribers: req.user._id } },
       { new: true },
     );
     if (!user) {

@@ -34,12 +34,11 @@ const userSchema = new mongoose.Schema({
     maxlength: [30, 'поле description должно содержать не более 30 символов'],
     default: '',
   },
-  subscription_person: [{
+  subscribers: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
     default: [],
   }],
-  // subscription_chanels: {},
   privat_settings: {
     comments: {
       type: Number,

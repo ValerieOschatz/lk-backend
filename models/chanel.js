@@ -21,6 +21,11 @@ const chanelSchema = new mongoose.Schema({
     ref: 'user',
     required: true,
   },
+  subscribers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user',
+    default: [],
+  }],
   privat_settings: {
     comments: {
       type: Number,
