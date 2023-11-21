@@ -2,7 +2,7 @@ const Chanel = require('../models/chanel');
 const {
   CREATED,
   badRequestErrorText,
-  notFoundFilmErrorText,
+  notFoundErrorText,
 } = require('../utils/data');
 
 const BadRequestError = require('../errors/BadRequestError');
@@ -50,7 +50,23 @@ const getChanelList = async (req, res, next) => {
   }
 };
 
+const getChanelCard = async (req, res, next) => {
+  try {
+    const chanel = await Chanel.findById(req.query.chanel_id);
+    if (!chanel) {
+      throw new NotFoundError(notFoundErrorText);
+    }
+    return res.send(chanel);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return next(new BadRequestError(badRequestErrorText));
+    }
+    return next(err);
+  }
+};
+
 module.exports = {
   createChanel,
   getChanelList,
+  getChanelCard,
 };

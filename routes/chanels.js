@@ -2,7 +2,11 @@ const express = require('express');
 
 const chanelsRoutes = express.Router();
 
-const { createChanel, getChanelList } = require('../controllers/chanels');
+const {
+  createChanel,
+  getChanelList,
+  getChanelCard,
+} = require('../controllers/chanels');
 
 const {
   validateCreateChanel,
@@ -10,5 +14,6 @@ const {
 
 chanelsRoutes.post('/create', validateCreateChanel, createChanel);
 chanelsRoutes.get('/list', getChanelList);
+chanelsRoutes.get('/card', getChanelCard);
 
 module.exports = chanelsRoutes;

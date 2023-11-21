@@ -8,7 +8,7 @@ const {
   CREATED,
   badRequestErrorText,
   conflictErrorText,
-  notFoundUserErrorText,
+  notFoundErrorText,
 } = require('../utils/data');
 
 const BadRequestError = require('../errors/BadRequestError');
@@ -72,7 +72,7 @@ const getProfile = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
     if (!user) {
-      throw new NotFoundError(notFoundUserErrorText);
+      throw new NotFoundError(notFoundErrorText);
     }
     return res.send(user);
   } catch (err) {
@@ -107,12 +107,12 @@ const getUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.query.user_id);
     if (!user) {
-      throw new NotFoundError('Запрашиваемый пользователь не найден');
+      throw new NotFoundError(notFoundErrorText);
     }
     return res.send(user);
   } catch (err) {
-    if (err.name === 'CastError') {
-      return next(new BadRequestError('Переданы некорректные данные'));
+    if (err.name === 'ValidationError') {
+      return next(new BadRequestError(badRequestErrorText));
     }
     return next(err);
   }
@@ -127,7 +127,7 @@ const updatePhoto = async (req, res, next) => {
       { new: true, runValidators: true },
     );
     if (!user) {
-      throw new NotFoundError(notFoundUserErrorText);
+      throw new NotFoundError(notFoundErrorText);
     }
     return res.send(user);
   } catch (err) {
@@ -147,7 +147,7 @@ const updateProfileInfo = async (req, res, next) => {
       { new: true, runValidators: true },
     );
     if (!user) {
-      throw new NotFoundError(notFoundUserErrorText);
+      throw new NotFoundError(notFoundErrorText);
     }
     return res.send(user);
   } catch (err) {
@@ -178,7 +178,7 @@ const updatePrivatSettings = async (req, res, next) => {
       { new: true, runValidators: true },
     );
     if (!user) {
-      throw new NotFoundError(notFoundUserErrorText);
+      throw new NotFoundError(notFoundErrorText);
     }
     return res.send(user);
   } catch (err) {
@@ -200,7 +200,7 @@ const updateLogin = async (req, res, next) => {
     );
 
     if (!user) {
-      throw new NotFoundError(notFoundUserErrorText);
+      throw new NotFoundError(notFoundErrorText);
     }
     return res.send(user);
   } catch (err) {
@@ -227,7 +227,7 @@ const updatePassword = async (req, res, next) => {
     const visibleUser = { login: user.login, name: user.name };
 
     if (!user) {
-      throw new NotFoundError(notFoundUserErrorText);
+      throw new NotFoundError(notFoundErrorText);
     }
     return res.send(visibleUser);
   } catch (err) {
@@ -246,7 +246,7 @@ const subscribe = async (req, res, next) => {
       { new: true },
     );
     if (!user) {
-      throw new NotFoundError(notFoundUserErrorText);
+      throw new NotFoundError(notFoundErrorText);
     }
     return res.send(user);
   } catch (err) {
@@ -265,7 +265,7 @@ const unsubsxribe = async (req, res, next) => {
       { new: true },
     );
     if (!user) {
-      throw new NotFoundError(notFoundUserErrorText);
+      throw new NotFoundError(notFoundErrorText);
     }
     return res.send(user);
   } catch (err) {
