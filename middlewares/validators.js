@@ -43,6 +43,12 @@ const validateUpdatePassword = celebrate({
   }),
 });
 
+const validateCheckUser = celebrate({
+  params: Joi.object().keys({
+    user_id: Joi.string().alphanum().length(24),
+  }),
+});
+
 module.exports = {
   validateRegister,
   validateLogin,
@@ -50,4 +56,5 @@ module.exports = {
   validateUpdatePrivatSettigs,
   validateUpdateLogin,
   validateUpdatePassword,
+  validateCheckUser,
 };

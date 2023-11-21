@@ -34,11 +34,6 @@ const userSchema = new mongoose.Schema({
     maxlength: [30, 'поле description должно содержать не более 30 символов'],
     default: '',
   },
-  subscribers: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'user',
-    default: [],
-  }],
   subscription_person: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',

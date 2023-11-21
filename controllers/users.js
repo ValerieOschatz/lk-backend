@@ -96,7 +96,7 @@ const getUsers = async (req, res, next) => {
 
 const getUser = async (req, res, next) => {
   try {
-    const user = await User.findById(req.query.userId);
+    const user = await User.findById(req.query.user_id);
     if (!user) {
       throw new NotFoundError('Запрашиваемый пользователь не найден');
     }
@@ -118,12 +118,12 @@ const updatePhoto = async (req, res, next) => {
       { new: true, runValidators: true },
     );
     if (!user) {
-      throw new NotFoundError('Запрашиваемый пользователь не найден');
+      throw new NotFoundError(notFoundUserErrorText);
     }
     return res.send(user);
   } catch (err) {
     if (err.name === 'ValidationError') {
-      return next(new BadRequestError('Переданы некорректные данные'));
+      return next(new BadRequestError(badRequestErrorText));
     }
     return next(err);
   }
@@ -144,9 +144,6 @@ const updateProfileInfo = async (req, res, next) => {
   } catch (err) {
     if (err.name === 'ValidationError') {
       return next(new BadRequestError(badRequestErrorText));
-    }
-    if (err.code === 11000) {
-      return next(new ConflictError(conflictErrorText));
     }
     return next(err);
   }
@@ -178,9 +175,6 @@ const updatePrivatSettings = async (req, res, next) => {
   } catch (err) {
     if (err.name === 'ValidationError') {
       return next(new BadRequestError(badRequestErrorText));
-    }
-    if (err.code === 11000) {
-      return next(new ConflictError(conflictErrorText));
     }
     return next(err);
   }
@@ -231,8 +225,43 @@ const updatePassword = async (req, res, next) => {
     if (err.name === 'ValidationError') {
       return next(new BadRequestError(badRequestErrorText));
     }
-    if (err.code === 11000) {
-      return next(new ConflictError(conflictErrorText));
+    return next(err);
+  }
+};
+
+const subscribe = async (req, res, next) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { $addToSet: { subscription_person: req.query.user_id } },
+      { new: true },
+    );
+    if (!user) {
+      throw new NotFoundError(notFoundUserErrorText);
+    }
+    return res.send(user);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return next(new BadRequestError(badRequestErrorText));
+    }
+    return next(err);
+  }
+};
+
+const unsubsxribe = async (req, res, next) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { $pull: { subscription_person: req.query.user_id } },
+      { new: true },
+    );
+    if (!user) {
+      throw new NotFoundError(notFoundUserErrorText);
+    }
+    return res.send(user);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return next(new BadRequestError(badRequestErrorText));
     }
     return next(err);
   }
@@ -249,4 +278,6 @@ module.exports = {
   updatePrivatSettings,
   updateLogin,
   updatePassword,
+  subscribe,
+  unsubsxribe,
 };
