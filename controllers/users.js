@@ -84,6 +84,15 @@ const getUsers = async (req, res, next) => {
   try {
     let users = await User.find({});
 
+    if (req.query.subscribers) {
+      users = users.filter((item) => item.subscription_person.includes(req.user._id));
+    }
+
+    if (req.query.subscriptions) {
+      const currentUser = await User.findById(req.user._id);
+      users = users.filter((item) => currentUser.subscription_person.includes(item._id));
+    }
+
     if (req.query.name) {
       users = users.filter((item) => item.name.includes(req.query.name));
     }
