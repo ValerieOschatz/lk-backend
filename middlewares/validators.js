@@ -49,6 +49,13 @@ const validateCheckUser = celebrate({
   }),
 });
 
+const validateCreateChanel = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(20).required(),
+    description: Joi.string().max(30),
+  }),
+});
+
 module.exports = {
   validateRegister,
   validateLogin,
@@ -57,4 +64,5 @@ module.exports = {
   validateUpdateLogin,
   validateUpdatePassword,
   validateCheckUser,
+  validateCreateChanel,
 };
