@@ -17,10 +17,24 @@ const NotFoundError = require('../errors/NotFoundError');
 
 const register = async (req, res, next) => {
   try {
-    const { login, password, name } = req.body;
+    const {
+      login,
+      password,
+      name,
+    } = req.body;
+
     const hash = await bcrypt.hash(password, 10);
-    const user = await User.create({ login, password: hash, name });
-    const visibleUser = { login: user.login, name: user.name };
+
+    const user = await User.create({
+      login,
+      password: hash,
+      name,
+    });
+
+    const visibleUser = {
+      login: user.login,
+      name: user.name,
+    };
 
     return res.status(CREATED).send(visibleUser);
   } catch (err) {
@@ -69,7 +83,11 @@ const getProfile = async (req, res, next) => {
 const getUsers = async (req, res, next) => {
   try {
     let users = await User.find({});
-    users = users.filter((item) => item.name.includes(req.query.name));
+
+    if (req.query.name) {
+      users = users.filter((item) => item.name.includes(req.query.name));
+    }
+
     return res.send(users);
   } catch (err) {
     return next(err);
@@ -136,7 +154,12 @@ const updateProfileInfo = async (req, res, next) => {
 
 const updatePrivatSettings = async (req, res, next) => {
   try {
-    const { comments, sharing, profile_info } = req.body;
+    const {
+      comments,
+      sharing,
+      profile_info,
+    } = req.body;
+
     const user = await User.findByIdAndUpdate(
       req.user._id,
       {
@@ -163,6 +186,58 @@ const updatePrivatSettings = async (req, res, next) => {
   }
 };
 
+const updateLogin = async (req, res, next) => {
+  try {
+    const { login } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { login },
+      { new: true, runValidators: true },
+    );
+
+    if (!user) {
+      throw new NotFoundError(notFoundUserErrorText);
+    }
+    return res.send(user);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return next(new BadRequestError(badRequestErrorText));
+    }
+    if (err.code === 11000) {
+      return next(new ConflictError(conflictErrorText));
+    }
+    return next(err);
+  }
+};
+
+const updatePassword = async (req, res, next) => {
+  try {
+    const { password } = req.body;
+    const hash = await bcrypt.hash(password, 10);
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { password: hash },
+      { new: true, runValidators: true },
+    );
+    const visibleUser = { login: user.login, name: user.name };
+
+    if (!user) {
+      throw new NotFoundError(notFoundUserErrorText);
+    }
+    return res.send(visibleUser);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return next(new BadRequestError(badRequestErrorText));
+    }
+    if (err.code === 11000) {
+      return next(new ConflictError(conflictErrorText));
+    }
+    return next(err);
+  }
+};
+
 module.exports = {
   register,
   loginProfile,
@@ -172,4 +247,6 @@ module.exports = {
   updatePhoto,
   updateProfileInfo,
   updatePrivatSettings,
+  updateLogin,
+  updatePassword,
 };

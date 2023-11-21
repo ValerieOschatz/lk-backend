@@ -31,9 +31,23 @@ const validateUpdatePrivatSettigs = celebrate({
   }),
 });
 
+const validateUpdateLogin = celebrate({
+  body: Joi.object().keys({
+    login: Joi.string().min(2).max(20).regex(regex),
+  }),
+});
+
+const validateUpdatePassword = celebrate({
+  body: Joi.object().keys({
+    password: Joi.string().required(),
+  }),
+});
+
 module.exports = {
   validateRegister,
   validateLogin,
   validateUpdateProfileInfo,
   validateUpdatePrivatSettigs,
+  validateUpdateLogin,
+  validateUpdatePassword,
 };
