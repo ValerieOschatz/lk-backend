@@ -2,7 +2,11 @@ const express = require('express');
 
 const authRoutes = express.Router();
 
-const { register, loginProfile } = require('../controllers/users');
+const {
+  register,
+  loginProfile,
+  logout,
+} = require('../controllers/users');
 const {
   validateRegister,
   validateLogin,
@@ -10,5 +14,6 @@ const {
 
 authRoutes.post('/register', validateRegister, register);
 authRoutes.post('/login', validateLogin, loginProfile);
+authRoutes.get('/logout', logout);
 
 module.exports = authRoutes;

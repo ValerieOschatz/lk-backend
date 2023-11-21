@@ -276,6 +276,18 @@ const unsubsxribe = async (req, res, next) => {
   }
 };
 
+const logout = (req, res, next) => {
+  try {
+    return res.clearCookie('jwt', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+    }).send({ message: 'Выход' });
+  } catch (err) {
+    return next(err);
+  }
+};
+
 module.exports = {
   register,
   loginProfile,
@@ -289,4 +301,5 @@ module.exports = {
   updatePassword,
   subscribe,
   unsubsxribe,
+  logout,
 };
