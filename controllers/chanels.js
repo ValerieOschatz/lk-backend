@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const Chanel = require('../models/chanel');
 const {
   CREATED,
@@ -65,8 +66,29 @@ const getChanelCard = async (req, res, next) => {
   }
 };
 
+const updatePhoto = async (req, res, next) => {
+  try {
+    const photo = req.file.path.split('\\').join('/');
+    const chanel = await Chanel.findByIdAndUpdate(
+      req.query.card_id,
+      { photo },
+      { new: true, runValidators: true },
+    );
+    if (!chanel) {
+      throw new NotFoundError(notFoundErrorText);
+    }
+    return res.send(chanel);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return next(new BadRequestError(badRequestErrorText));
+    }
+    return next(err);
+  }
+};
+
 module.exports = {
   createChanel,
   getChanelList,
   getChanelCard,
+  updatePhoto,
 };
