@@ -23,8 +23,17 @@ const validateUpdateProfileInfo = celebrate({
   }),
 });
 
+const validateUpdatePrivatSettigs = celebrate({
+  body: Joi.object().keys({
+    comments: Joi.number().integer().min(0).max(2),
+    sharing: Joi.number().integer().min(0).max(2),
+    profile_info: Joi.number().integer().min(0).max(2),
+  }),
+});
+
 module.exports = {
   validateRegister,
   validateLogin,
   validateUpdateProfileInfo,
+  validateUpdatePrivatSettigs,
 };

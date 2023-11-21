@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -133,6 +134,35 @@ const updateProfileInfo = async (req, res, next) => {
   }
 };
 
+const updatePrivatSettings = async (req, res, next) => {
+  try {
+    const { comments, sharing, profile_info } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        privat_settings: {
+          comments,
+          sharing,
+          profile_info,
+        },
+      },
+      { new: true, runValidators: true },
+    );
+    if (!user) {
+      throw new NotFoundError(notFoundUserErrorText);
+    }
+    return res.send(user);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return next(new BadRequestError(badRequestErrorText));
+    }
+    if (err.code === 11000) {
+      return next(new ConflictError(conflictErrorText));
+    }
+    return next(err);
+  }
+};
+
 module.exports = {
   register,
   loginProfile,
@@ -141,4 +171,5 @@ module.exports = {
   getUser,
   updatePhoto,
   updateProfileInfo,
+  updatePrivatSettings,
 };
