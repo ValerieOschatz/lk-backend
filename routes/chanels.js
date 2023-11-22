@@ -10,12 +10,15 @@ const {
   updatePhoto,
   updateChanelInfo,
   updatePrivatSettings,
+  subscribe,
+  unsubsxribe,
 } = require('../controllers/chanels');
 
 const {
   validateCreateChanel,
   validateUpdateChanelInfo,
   validateUpdateChanelPrivatSettigs,
+  validateCheckChanel,
 } = require('../middlewares/validators');
 
 chanelsRoutes.post('/create', validateCreateChanel, createChanel);
@@ -24,5 +27,7 @@ chanelsRoutes.get('/card', getChanelCard);
 chanelsRoutes.patch('/photo', upload.single('image'), updatePhoto);
 chanelsRoutes.patch('/info', validateUpdateChanelInfo, updateChanelInfo);
 chanelsRoutes.patch('/privat-settings', validateUpdateChanelPrivatSettigs, updatePrivatSettings);
+chanelsRoutes.put('/subscribe', validateCheckChanel, subscribe);
+chanelsRoutes.delete('/subscribe', validateCheckChanel, unsubsxribe);
 
 module.exports = chanelsRoutes;

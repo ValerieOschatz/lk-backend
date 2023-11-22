@@ -152,6 +152,44 @@ const updatePrivatSettings = async (req, res, next) => {
   }
 };
 
+const subscribe = async (req, res, next) => {
+  try {
+    const chanel = await Chanel.findByIdAndUpdate(
+      req.query.chanelId,
+      { $addToSet: { subscribers: req.user._id } },
+      { new: true },
+    );
+    if (!chanel) {
+      throw new NotFoundError(notFoundErrorText);
+    }
+    return res.send(chanel);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return next(new BadRequestError(badRequestErrorText));
+    }
+    return next(err);
+  }
+};
+
+const unsubsxribe = async (req, res, next) => {
+  try {
+    const chanel = await Chanel.findByIdAndUpdate(
+      req.query.chanelId,
+      { $pull: { subscribers: req.user._id } },
+      { new: true },
+    );
+    if (!chanel) {
+      throw new NotFoundError(notFoundErrorText);
+    }
+    return res.send(chanel);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return next(new BadRequestError(badRequestErrorText));
+    }
+    return next(err);
+  }
+};
+
 module.exports = {
   createChanel,
   getChanelList,
@@ -159,4 +197,6 @@ module.exports = {
   updatePhoto,
   updateChanelInfo,
   updatePrivatSettings,
+  subscribe,
+  unsubsxribe,
 };
