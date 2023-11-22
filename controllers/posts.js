@@ -1,5 +1,3 @@
-/* eslint-disable eqeqeq */
-/* eslint-disable camelcase */
 const Post = require('../models/post');
 const {
   CREATED,
@@ -47,12 +45,13 @@ const getPostList = async (req, res, next) => {
     let posts = await Post.find({}).populate(['owner', 'ownerChanel']);
 
     if (req.query.owner) {
-      posts = posts.filter((item) => !item.ownerChanel && item.owner._id == req.query.owner);
+      posts = posts.filter((item) => !item.ownerChanel
+      && item.owner._id.toString() === req.query.owner);
     }
 
     if (req.query.ownerChanel) {
-      // eslint-disable-next-line max-len
-      posts = posts.filter((item) => item.ownerChanel && item.ownerChanel._id == req.query.ownerChanel);
+      posts = posts.filter((item) => item.ownerChanel
+      && item.ownerChanel._id.toString() === req.query.ownerChanel);
     }
 
     return res.send(posts);
@@ -61,160 +60,107 @@ const getPostList = async (req, res, next) => {
   }
 };
 
-// const getChanelCard = async (req, res, next) => {
-//   try {
-//     const chanel = await Chanel.findById(req.query.chanelId);
-//     if (!chanel) {
-//       throw new NotFoundError(notFoundErrorText);
-//     }
-//     return res.send(chanel);
-//   } catch (err) {
-//     if (err.name === 'ValidationError') {
-//       return next(new BadRequestError(badRequestErrorText));
-//     }
-//     return next(err);
-//   }
-// };
+const getPostCard = async (req, res, next) => {
+  try {
+    const post = await Post.findById(req.query.postId);
+    if (!post) {
+      throw new NotFoundError(notFoundErrorText);
+    }
+    return res.send(post);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return next(new BadRequestError(badRequestErrorText));
+    }
+    return next(err);
+  }
+};
 
-// const updatePhoto = async (req, res, next) => {
-//   try {
-//     const photo = req.file.path.split('\\').join('/');
-//     const chanel = await Chanel.findById(req.query.chanelId);
-//     if (!chanel) {
-//       throw new NotFoundError(notFoundErrorText);
-//     }
-//     if (chanel.owner.toString() === req.user._id) {
-//       await chanel.updateOne(
-//         { photo },
-//         { new: true, runValidators: true },
-//       );
-//       return res.send(chanel);
-//     }
-//     throw new ForbiddenError(forbiddenErrorText);
-//   } catch (err) {
-//     if (err.name === 'ValidationError') {
-//       return next(new BadRequestError(badRequestErrorText));
-//     }
-//     return next(err);
-//   }
-// };
+const updatePostText = async (req, res, next) => {
+  try {
+    const { postId, text } = req.body;
+    const post = await Post.findById(postId);
+    if (!post) {
+      throw new NotFoundError(notFoundErrorText);
+    }
+    if (post.owner.toString() === req.user._id) {
+      await post.updateOne(
+        { text },
+        { new: true, runValidators: true },
+      );
+      return res.send(post);
+    }
+    throw new ForbiddenError(forbiddenErrorText);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return next(new BadRequestError(badRequestErrorText));
+    }
+    return next(err);
+  }
+};
 
-// const updateChanelInfo = async (req, res, next) => {
-//   try {
-//     const { chanelId, name, description } = req.body;
-//     const chanel = await Chanel.findById(chanelId);
-//     if (!chanel) {
-//       throw new NotFoundError(notFoundErrorText);
-//     }
-//     if (chanel.owner.toString() === req.user._id) {
-//       await chanel.updateOne(
-//         { name, description },
-//         { new: true, runValidators: true },
-//       );
-//       return res.send(chanel);
-//     }
-//     throw new ForbiddenError(forbiddenErrorText);
-//   } catch (err) {
-//     if (err.name === 'ValidationError') {
-//       return next(new BadRequestError(badRequestErrorText));
-//     }
-//     return next(err);
-//   }
-// };
+const addLike = async (req, res, next) => {
+  try {
+    const post = await Post.findByIdAndUpdate(
+      req.query.postId,
+      { $addToSet: { likes: req.user._id } },
+      { new: true },
+    );
+    if (!post) {
+      throw new NotFoundError(notFoundErrorText);
+    }
+    return res.send(post);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return next(new BadRequestError(badRequestErrorText));
+    }
+    return next(err);
+  }
+};
 
-// const updatePrivatSettings = async (req, res, next) => {
-//   try {
-//     const {
-//       chanelId,
-//       comments,
-//       sharing,
-//       chanelInfo,
-//     } = req.body;
+const removeLike = async (req, res, next) => {
+  try {
+    const post = await Post.findByIdAndUpdate(
+      req.query.postId,
+      { $pull: { likes: req.user._id } },
+      { new: true },
+    );
+    if (!post) {
+      throw new NotFoundError(notFoundErrorText);
+    }
+    return res.send(post);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return next(new BadRequestError(badRequestErrorText));
+    }
+    return next(err);
+  }
+};
 
-//     const chanel = await Chanel.findById(chanelId);
-//     if (!chanel) {
-//       throw new NotFoundError(notFoundErrorText);
-//     }
-//     if (chanel.owner.toString() === req.user._id) {
-//       await chanel.updateOne(
-//         {
-//           privatSettings: {
-//             comments,
-//             sharing,
-//             chanelInfo,
-//           },
-//         },
-//         { new: true, runValidators: true },
-//       );
-//       return res.send(chanel);
-//     }
-//     throw new ForbiddenError(forbiddenErrorText);
-//   } catch (err) {
-//     if (err.name === 'ValidationError') {
-//       return next(new BadRequestError(badRequestErrorText));
-//     }
-//     return next(err);
-//   }
-// };
-
-// const subscribe = async (req, res, next) => {
-//   try {
-//     const chanel = await Chanel.findByIdAndUpdate(
-//       req.query.chanelId,
-//       { $addToSet: { subscribers: req.user._id } },
-//       { new: true },
-//     );
-//     if (!chanel) {
-//       throw new NotFoundError(notFoundErrorText);
-//     }
-//     return res.send(chanel);
-//   } catch (err) {
-//     if (err.name === 'ValidationError') {
-//       return next(new BadRequestError(badRequestErrorText));
-//     }
-//     return next(err);
-//   }
-// };
-
-// const unsubsxribe = async (req, res, next) => {
-//   try {
-//     const chanel = await Chanel.findByIdAndUpdate(
-//       req.query.chanelId,
-//       { $pull: { subscribers: req.user._id } },
-//       { new: true },
-//     );
-//     if (!chanel) {
-//       throw new NotFoundError(notFoundErrorText);
-//     }
-//     return res.send(chanel);
-//   } catch (err) {
-//     if (err.name === 'ValidationError') {
-//       return next(new BadRequestError(badRequestErrorText));
-//     }
-//     return next(err);
-//   }
-// };
-
-// const deleteChanel = async (req, res, next) => {
-//   try {
-//     const chanel = await Chanel.findById(req.query.chanelId);
-//     if (!chanel) {
-//       throw new NotFoundError(notFoundErrorText);
-//     }
-//     if (chanel.owner.toString() === req.user._id) {
-//       await chanel.deleteOne();
-//       return res.send('Канал успешно удален');
-//     }
-//     throw new ForbiddenError(forbiddenErrorText);
-//   } catch (err) {
-//     if (err.name === 'ValidationError') {
-//       return next(new BadRequestError(badRequestErrorText));
-//     }
-//     return next(err);
-//   }
-// };
+const deletePost = async (req, res, next) => {
+  try {
+    const post = await Post.findById(req.query.postId);
+    if (!post) {
+      throw new NotFoundError(notFoundErrorText);
+    }
+    if (post.owner.toString() === req.user._id) {
+      await post.deleteOne();
+      return res.send('Пост успешно удален');
+    }
+    throw new ForbiddenError(forbiddenErrorText);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return next(new BadRequestError(badRequestErrorText));
+    }
+    return next(err);
+  }
+};
 
 module.exports = {
   createPost,
   getPostList,
+  getPostCard,
+  updatePostText,
+  addLike,
+  removeLike,
+  deletePost,
 };

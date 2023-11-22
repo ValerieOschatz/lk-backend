@@ -1,24 +1,24 @@
 const express = require('express');
 const upload = require('../middlewares/upload');
 
-const chanelsRoutes = express.Router();
+const postRoutes = express.Router();
 
 const {
   createPost,
   getPostList,
+  getPostCard,
+  updatePostText,
+  addLike,
+  removeLike,
+  deletePost,
 } = require('../controllers/posts');
 
-const {
-} = require('../middlewares/validators');
+postRoutes.post('/create', upload.array('image'), createPost);
+postRoutes.get('/list', getPostList);
+postRoutes.get('/card', getPostCard);
+postRoutes.patch('/text', updatePostText);
+postRoutes.put('/like', addLike);
+postRoutes.delete('/like', removeLike);
+postRoutes.delete('/delete', deletePost);
 
-chanelsRoutes.post('/create', upload.array('image'), createPost);
-chanelsRoutes.get('/list', getPostList);
-// chanelsRoutes.get('/card', getChanelCard);
-// chanelsRoutes.patch('/photo', upload.single('image'), updatePhoto);
-// chanelsRoutes.patch('/info', validateUpdateChanelInfo, updateChanelInfo);
-// chanelsRoutes.patch('/privat-settings', validateUpdateChanelPrivatSettigs, updatePrivatSettings);
-// chanelsRoutes.put('/subscribe', validateCheckChanel, subscribe);
-// chanelsRoutes.delete('/subscribe', validateCheckChanel, unsubsxribe);
-// chanelsRoutes.delete('/delete', validateCheckChanel, deleteChanel);
-
-module.exports = chanelsRoutes;
+module.exports = postRoutes;
