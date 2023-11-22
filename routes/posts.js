@@ -5,13 +5,14 @@ const chanelsRoutes = express.Router();
 
 const {
   createPost,
+  getPostList,
 } = require('../controllers/posts');
 
 const {
 } = require('../middlewares/validators');
 
 chanelsRoutes.post('/create', upload.array('image'), createPost);
-// chanelsRoutes.get('/list', getChanelList);
+chanelsRoutes.get('/list', getPostList);
 // chanelsRoutes.get('/card', getChanelCard);
 // chanelsRoutes.patch('/photo', upload.single('image'), updatePhoto);
 // chanelsRoutes.patch('/info', validateUpdateChanelInfo, updateChanelInfo);

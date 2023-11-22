@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable camelcase */
 const Post = require('../models/post');
 const {
@@ -41,23 +42,24 @@ const createPost = async (req, res, next) => {
   }
 };
 
-// const getChanelList = async (req, res, next) => {
-//   try {
-//     let chanels = await Chanel.find({});
+const getPostList = async (req, res, next) => {
+  try {
+    let posts = await Post.find({}).populate(['owner', 'ownerChanel']);
 
-//     if (req.query.subscriptions) {
-//       chanels = chanels.filter((item) => item.subscribers.includes(req.query.subscriptions));
-//     }
+    if (req.query.owner) {
+      posts = posts.filter((item) => !item.ownerChanel && item.owner._id == req.query.owner);
+    }
 
-//     if (req.query.name) {
-//       chanels = chanels.filter((item) => item.name.includes(req.query.name));
-//     }
+    if (req.query.ownerChanel) {
+      // eslint-disable-next-line max-len
+      posts = posts.filter((item) => item.ownerChanel && item.ownerChanel._id == req.query.ownerChanel);
+    }
 
-//     return res.send(chanels);
-//   } catch (err) {
-//     return next(err);
-//   }
-// };
+    return res.send(posts);
+  } catch (err) {
+    return next(err);
+  }
+};
 
 // const getChanelCard = async (req, res, next) => {
 //   try {
@@ -214,4 +216,5 @@ const createPost = async (req, res, next) => {
 
 module.exports = {
   createPost,
+  getPostList,
 };
