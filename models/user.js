@@ -42,17 +42,17 @@ const userSchema = new mongoose.Schema({
   privatSettings: {
     comments: {
       type: Number,
-      enum: [0, 1, 2],
+      enum: [0, 1],
       default: 0,
     },
     sharing: {
       type: Number,
-      enum: [0, 1, 2],
+      enum: [0, 1],
       default: 0,
     },
     profileInfo: {
       type: Number,
-      enum: [0, 1, 2],
+      enum: [0, 1],
       default: 0,
     },
   },
