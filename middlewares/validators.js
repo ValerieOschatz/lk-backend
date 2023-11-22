@@ -27,7 +27,7 @@ const validateUpdatePrivatSettigs = celebrate({
   body: Joi.object().keys({
     comments: Joi.number().integer().min(0).max(2),
     sharing: Joi.number().integer().min(0).max(2),
-    profile_info: Joi.number().integer().min(0).max(2),
+    profileInfo: Joi.number().integer().min(0).max(2),
   }),
 });
 
@@ -45,12 +45,20 @@ const validateUpdatePassword = celebrate({
 
 const validateCheckUser = celebrate({
   params: Joi.object().keys({
-    user_id: Joi.string().alphanum().length(24),
+    userId: Joi.string().alphanum().length(24),
   }),
 });
 
 const validateCreateChanel = celebrate({
   body: Joi.object().keys({
+    name: Joi.string().min(2).max(20).required(),
+    description: Joi.string().max(30),
+  }),
+});
+
+const validateUpdateChanelInfo = celebrate({
+  body: Joi.object().keys({
+    chanelId: Joi.string().alphanum().length(24),
     name: Joi.string().min(2).max(20).required(),
     description: Joi.string().max(30),
   }),
@@ -65,4 +73,5 @@ module.exports = {
   validateUpdatePassword,
   validateCheckUser,
   validateCreateChanel,
+  validateUpdateChanelInfo,
 };

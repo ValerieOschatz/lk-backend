@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -105,7 +104,7 @@ const getUsers = async (req, res, next) => {
 
 const getUser = async (req, res, next) => {
   try {
-    const user = await User.findById(req.query.user_id);
+    const user = await User.findById(req.query.userId);
     if (!user) {
       throw new NotFoundError(notFoundErrorText);
     }
@@ -163,16 +162,16 @@ const updatePrivatSettings = async (req, res, next) => {
     const {
       comments,
       sharing,
-      profile_info,
+      profileInfo,
     } = req.body;
 
     const user = await User.findByIdAndUpdate(
       req.user._id,
       {
-        privat_settings: {
+        privatSettings: {
           comments,
           sharing,
-          profile_info,
+          profileInfo,
         },
       },
       { new: true, runValidators: true },
@@ -241,7 +240,7 @@ const updatePassword = async (req, res, next) => {
 const subscribe = async (req, res, next) => {
   try {
     const user = await User.findByIdAndUpdate(
-      req.query.user_id,
+      req.query.userId,
       { $addToSet: { subscribers: req.user._id } },
       { new: true },
     );
@@ -260,7 +259,7 @@ const subscribe = async (req, res, next) => {
 const unsubsxribe = async (req, res, next) => {
   try {
     const user = await User.findByIdAndUpdate(
-      req.query.user_id,
+      req.query.userId,
       { $pull: { subscribers: req.user._id } },
       { new: true },
     );

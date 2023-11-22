@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema({
     ref: 'user',
     default: [],
   }],
-  privat_settings: {
+  privatSettings: {
     comments: {
       type: Number,
       enum: [0, 1, 2],
@@ -50,7 +50,7 @@ const userSchema = new mongoose.Schema({
       enum: [0, 1, 2],
       default: 0,
     },
-    profile_info: {
+    profileInfo: {
       type: Number,
       enum: [0, 1, 2],
       default: 0,
