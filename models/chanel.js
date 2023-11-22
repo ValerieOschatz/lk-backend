@@ -37,7 +37,7 @@ const chanelSchema = new mongoose.Schema({
       enum: [0, 1, 2],
       default: 0,
     },
-    profileInfo: {
+    chanelInfo: {
       type: Number,
       enum: [0, 1, 2],
       default: 0,

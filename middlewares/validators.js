@@ -64,6 +64,15 @@ const validateUpdateChanelInfo = celebrate({
   }),
 });
 
+const validateUpdateChanelPrivatSettigs = celebrate({
+  body: Joi.object().keys({
+    chanelId: Joi.string().alphanum().length(24),
+    comments: Joi.number().integer().min(0).max(2),
+    sharing: Joi.number().integer().min(0).max(2),
+    chanelInfo: Joi.number().integer().min(0).max(2),
+  }),
+});
+
 module.exports = {
   validateRegister,
   validateLogin,
@@ -74,4 +83,5 @@ module.exports = {
   validateCheckUser,
   validateCreateChanel,
   validateUpdateChanelInfo,
+  validateUpdateChanelPrivatSettigs,
 };

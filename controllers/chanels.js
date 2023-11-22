@@ -116,10 +116,47 @@ const updateChanelInfo = async (req, res, next) => {
   }
 };
 
+const updatePrivatSettings = async (req, res, next) => {
+  try {
+    const {
+      chanelId,
+      comments,
+      sharing,
+      chanelInfo,
+    } = req.body;
+
+    const chanel = await Chanel.findById(chanelId);
+    if (!chanel) {
+      throw new NotFoundError(notFoundErrorText);
+    }
+    if (chanel.owner.toString() === req.user._id) {
+      const updatedChanel = await Chanel.findByIdAndUpdate(
+        chanelId,
+        {
+          privatSettings: {
+            comments,
+            sharing,
+            chanelInfo,
+          },
+        },
+        { new: true, runValidators: true },
+      );
+      return res.send(updatedChanel);
+    }
+    throw new ForbiddenError(forbiddenErrorText);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return next(new BadRequestError(badRequestErrorText));
+    }
+    return next(err);
+  }
+};
+
 module.exports = {
   createChanel,
   getChanelList,
   getChanelCard,
   updatePhoto,
   updateChanelInfo,
+  updatePrivatSettings,
 };
