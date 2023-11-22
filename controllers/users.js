@@ -2,7 +2,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
+const Chanel = require('../models/chanel');
 const { secretKey } = require('../utils/jwtConfig');
+
 const {
   CREATED,
   badRequestErrorText,
@@ -90,6 +92,11 @@ const getUsers = async (req, res, next) => {
     if (req.query.subscribers) {
       const currentUser = await User.findById(req.query.subscribers);
       users = users.filter((item) => currentUser.subscribers.includes(item._id));
+    }
+
+    if (req.query.chanelSubscribers) {
+      const currentChanel = await Chanel.findById(req.query.chanelSubscribers);
+      users = users.filter((item) => currentChanel.subscribers.includes(item._id));
     }
 
     if (req.query.name) {

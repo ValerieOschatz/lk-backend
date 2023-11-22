@@ -75,7 +75,7 @@ const validateUpdateChanelPrivatSettigs = celebrate({
 
 const validateCheckChanel = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().alphanum().length(24),
+    chanelId: Joi.string().alphanum().length(24),
   }),
 });
 

@@ -76,12 +76,11 @@ const updatePhoto = async (req, res, next) => {
       throw new NotFoundError(notFoundErrorText);
     }
     if (chanel.owner.toString() === req.user._id) {
-      const updatedChanel = await Chanel.findByIdAndUpdate(
-        req.query.chanelId,
+      await chanel.updateOne(
         { photo },
         { new: true, runValidators: true },
       );
-      return res.send(updatedChanel);
+      return res.send(chanel);
     }
     throw new ForbiddenError(forbiddenErrorText);
   } catch (err) {
@@ -100,12 +99,11 @@ const updateChanelInfo = async (req, res, next) => {
       throw new NotFoundError(notFoundErrorText);
     }
     if (chanel.owner.toString() === req.user._id) {
-      const updatedChanel = await Chanel.findByIdAndUpdate(
-        chanelId,
+      await chanel.updateOne(
         { name, description },
         { new: true, runValidators: true },
       );
-      return res.send(updatedChanel);
+      return res.send(chanel);
     }
     throw new ForbiddenError(forbiddenErrorText);
   } catch (err) {
@@ -130,8 +128,7 @@ const updatePrivatSettings = async (req, res, next) => {
       throw new NotFoundError(notFoundErrorText);
     }
     if (chanel.owner.toString() === req.user._id) {
-      const updatedChanel = await Chanel.findByIdAndUpdate(
-        chanelId,
+      await chanel.updateOne(
         {
           privatSettings: {
             comments,
@@ -141,7 +138,7 @@ const updatePrivatSettings = async (req, res, next) => {
         },
         { new: true, runValidators: true },
       );
-      return res.send(updatedChanel);
+      return res.send(chanel);
     }
     throw new ForbiddenError(forbiddenErrorText);
   } catch (err) {
@@ -190,6 +187,25 @@ const unsubsxribe = async (req, res, next) => {
   }
 };
 
+const deleteChanel = async (req, res, next) => {
+  try {
+    const chanel = await Chanel.findById(req.query.chanelId);
+    if (!chanel) {
+      throw new NotFoundError(notFoundErrorText);
+    }
+    if (chanel.owner.toString() === req.user._id) {
+      await chanel.deleteOne();
+      return res.send('Канал успешно удален');
+    }
+    throw new ForbiddenError(forbiddenErrorText);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return next(new BadRequestError(badRequestErrorText));
+    }
+    return next(err);
+  }
+};
+
 module.exports = {
   createChanel,
   getChanelList,
@@ -199,4 +215,5 @@ module.exports = {
   updatePrivatSettings,
   subscribe,
   unsubsxribe,
+  deleteChanel,
 };
