@@ -1,5 +1,5 @@
-/* eslint-disable camelcase */
 const Chanel = require('../models/chanel');
+const sort = require('../middlewares/sort');
 const {
   CREATED,
   badRequestErrorText,
@@ -19,11 +19,13 @@ const createChanel = async (req, res, next) => {
     } = req.body;
 
     const owner = req.user._id;
+    const createdAt = Date.now();
 
     const chanel = await Chanel.create({
       name,
       description,
       owner,
+      createdAt,
     });
 
     return res.status(CREATED).send(chanel);
@@ -46,6 +48,7 @@ const getChanelList = async (req, res, next) => {
     if (req.query.name) {
       chanels = chanels.filter((item) => item.name.includes(req.query.name));
     }
+    chanels = sort(chanels);
 
     return res.send(chanels);
   } catch (err) {

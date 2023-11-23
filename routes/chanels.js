@@ -16,13 +16,13 @@ const {
 } = require('../controllers/chanels');
 
 const {
-  validateCreateChanel,
+  // validateCreateChanel,
   validateUpdateChanelInfo,
   validateUpdateChanelPrivatSettigs,
   validateCheckChanel,
 } = require('../middlewares/validators');
 
-chanelsRoutes.post('/create', validateCreateChanel, createChanel);
+chanelsRoutes.post('/create', createChanel);
 chanelsRoutes.get('/list', getChanelList);
 chanelsRoutes.get('/card', getChanelCard);
 chanelsRoutes.patch('/photo', upload.single('image'), updatePhoto);

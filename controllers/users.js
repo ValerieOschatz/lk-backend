@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
 const Chanel = require('../models/chanel');
+const sort = require('../middlewares/sort');
 const { secretKey } = require('../utils/jwtConfig');
 
 const {
@@ -25,11 +26,13 @@ const register = async (req, res, next) => {
     } = req.body;
 
     const hash = await bcrypt.hash(password, 10);
+    const createdAt = Date.now();
 
     const user = await User.create({
       login,
       password: hash,
       name,
+      createdAt,
     });
 
     const visibleUser = {
@@ -102,6 +105,7 @@ const getUsers = async (req, res, next) => {
     if (req.query.name) {
       users = users.filter((item) => item.name.includes(req.query.name));
     }
+    users = sort(users);
 
     return res.send(users);
   } catch (err) {

@@ -18,6 +18,7 @@ const createPost = async (req, res, next) => {
     } = req.body;
 
     const owner = req.user._id;
+    const createdAt = Date.now();
     let photos = [];
 
     if (req.files) {
@@ -29,6 +30,7 @@ const createPost = async (req, res, next) => {
       photos,
       ownerChanel,
       owner,
+      createdAt,
     });
 
     return res.status(CREATED).send(post);
@@ -43,6 +45,7 @@ const createPost = async (req, res, next) => {
 const getPostList = async (req, res, next) => {
   try {
     let posts = await Post.find({}).populate(['owner', 'ownerChanel']);
+    posts.reverse();
 
     if (req.query.owner) {
       posts = posts.filter((item) => !item.ownerChanel
@@ -62,7 +65,7 @@ const getPostList = async (req, res, next) => {
 
 const getPostCard = async (req, res, next) => {
   try {
-    const post = await Post.findById(req.query.postId);
+    const post = await Post.findById(req.query.postId).populate(['owner', 'ownerChanel']);
     if (!post) {
       throw new NotFoundError(notFoundErrorText);
     }

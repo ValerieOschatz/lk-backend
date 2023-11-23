@@ -43,6 +43,10 @@ const chanelSchema = new mongoose.Schema({
       default: 0,
     },
   },
+  createdAt: {
+    type: Date,
+    default: null,
+  },
 });
 
 module.exports = mongoose.model('chanel', chanelSchema);

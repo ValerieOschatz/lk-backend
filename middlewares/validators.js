@@ -49,12 +49,12 @@ const validateCheckUser = celebrate({
   }),
 });
 
-const validateCreateChanel = celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().min(2).max(20).required(),
-    description: Joi.string().max(30),
-  }),
-});
+// const validateCreateChanel = celebrate({
+//   body: Joi.object().keys({
+//     name: Joi.string().min(2).max(20).required(),
+//     description: Joi.string().max(30),
+//   }),
+// });
 
 const validateUpdateChanelInfo = celebrate({
   body: Joi.object().keys({
@@ -87,7 +87,7 @@ module.exports = {
   validateUpdateLogin,
   validateUpdatePassword,
   validateCheckUser,
-  validateCreateChanel,
+  // validateCreateChanel,
   validateUpdateChanelInfo,
   validateUpdateChanelPrivatSettigs,
   validateCheckChanel,
