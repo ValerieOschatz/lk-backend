@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const commentSchema = new mongoose.Schema({
   text: {
     type: String,
-    default: '',
     maxlength: [80, ', поле должно содержать не более 80 символов'],
     required: true,
   },
@@ -15,6 +14,7 @@ const commentSchema = new mongoose.Schema({
   answerTo: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'comment',
+    default: null,
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
@@ -32,4 +32,4 @@ const commentSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('post', commentSchema);
+module.exports = mongoose.model('comment', commentSchema);

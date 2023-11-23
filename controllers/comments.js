@@ -1,4 +1,4 @@
-const Comment = require('../models/post');
+const Comment = require('../models/comment');
 const {
   CREATED,
   badRequestErrorText,
@@ -130,13 +130,13 @@ const removeLike = async (req, res, next) => {
 
 const deleteComment = async (req, res, next) => {
   try {
-    const comment = await Comment.findById(req.query.postId);
+    const comment = await Comment.findById(req.query.commentId);
     if (!comment) {
       throw new NotFoundError(notFoundErrorText);
     }
     if (comment.owner.toString() === req.user._id) {
       await comment.deleteOne();
-      return res.send('Пост успешно удален');
+      return res.send('Объект успешно удален');
     }
     throw new ForbiddenError(forbiddenErrorText);
   } catch (err) {
