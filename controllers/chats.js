@@ -54,13 +54,13 @@ const createChat = async (req, res, next) => {
 
 const getChatList = async (req, res, next) => {
   try {
-    let chats = await Chat.find({});
+    let chats = await Chat.find({}).populate('participants');
 
     if (req.query.participant) {
-      chats = chats.filter((item) => item.participants.includes(req.query.participant));
+      // eslint-disable-next-line max-len
+      chats = chats.filter((item) => item.participants.find((el) => el._id.toString() === req.query.participant));
     }
     chats = sortByTime(chats);
-    chats.populate('participants');
     return res.send(chats);
   } catch (err) {
     return next(err);
@@ -109,7 +109,7 @@ const updateChatName = async (req, res, next) => {
   try {
     const { chatId, name } = req.body;
     const chat = await Chat.findById(chatId);
-    if (!chat && !chat.groupDetails.isGroup) {
+    if (!chat || !chat.groupDetails.isGroup) {
       throw new NotFoundError(notFoundErrorText);
     }
     if (chat.groupDetails.rights && chat.groupDetails.creator !== req.user._id) {
@@ -133,7 +133,7 @@ const updateRights = async (req, res, next) => {
     const { chatId, rights } = req.body;
 
     const chat = await Chat.findById(chatId);
-    if (!chat && !chat.groupDetails.isGroup) {
+    if (!chat || !chat.groupDetails.isGroup) {
       throw new NotFoundError(notFoundErrorText);
     }
     if (chat.groupDetails.creator.toString() === req.user._id) {
@@ -141,6 +141,8 @@ const updateRights = async (req, res, next) => {
         {
           groupDetails: {
             rights,
+            creator: chat.groupDetails.creator,
+            isGroup: chat.groupDetails.isGroup,
           },
         },
         { new: true, runValidators: true },
@@ -160,7 +162,7 @@ const addParticipant = async (req, res, next) => {
   try {
     const { chatId, participant } = req.body;
     const chat = await Chat.findById(chatId);
-    if (!chat && !chat.groupDetails.isGroup) {
+    if (!chat || !chat.groupDetails.isGroup) {
       throw new NotFoundError(notFoundErrorText);
     }
     if (chat.groupDetails.rights && chat.groupDetails.creator !== req.user._id) {
@@ -183,7 +185,7 @@ const removeParticipant = async (req, res, next) => {
   try {
     const { chatId, participant } = req.body;
     const chat = await Chat.findById(chatId);
-    if (!chat && !chat.groupDetails.isGroup) {
+    if (!chat || !chat.groupDetails.isGroup) {
       throw new NotFoundError(notFoundErrorText);
     }
     if (chat.groupDetails.rights && chat.groupDetails.creator !== req.user._id) {

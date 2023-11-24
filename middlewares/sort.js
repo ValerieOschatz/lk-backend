@@ -3,7 +3,7 @@ const sortByName = (list) => {
     if (a.name < b.name) {
       return -1;
     }
-    if (a.last_nom > b.last_nom) {
+    if (a.name > b.name) {
       return 1;
     }
     return 0;
@@ -13,10 +13,10 @@ const sortByName = (list) => {
 
 const sortByTime = (list) => {
   const sortedArr = list.sort((a, b) => {
-    if (a.name < b.name) {
+    if (Number(a.updatedAt) < Number(b.updatedAt)) {
       return -1;
     }
-    if (a.last_nom > b.last_nom) {
+    if (Number(a.updatedAt) > Number(b.updatedAt)) {
       return 1;
     }
     return 0;
