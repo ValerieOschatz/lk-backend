@@ -10,17 +10,17 @@ const chatSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
-  participants: {
+  participants: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
     required: true,
     default: [],
-  },
+  }],
   groupDetails: {
-    isGroup: [{
+    isGroup: {
       type: Boolean,
       default: false,
-    }],
+    },
     creator: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'user',

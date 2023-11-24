@@ -1,34 +1,49 @@
-const Chanel = require('../models/chanel');
-const sort = require('../middlewares/sort');
+const Chat = require('../models/chat');
+const { sortByTime } = require('../middlewares/sort');
+
 const {
   CREATED,
   badRequestErrorText,
   notFoundErrorText,
   forbiddenErrorText,
+  conflictErrorText,
 } = require('../utils/data');
 
 const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
 const ForbiddenError = require('../errors/ForbiddenError');
+const ConflictError = require('../errors/ConflictError');
 
-const createChanel = async (req, res, next) => {
+const createChat = async (req, res, next) => {
   try {
     const {
       name,
-      description,
+      otherParticipants,
+      isGroup,
+      rights,
     } = req.body;
 
-    const owner = req.user._id;
     const createdAt = Date.now();
+    const creator = req.user._id;
+    const participants = [...otherParticipants, creator];
 
-    const chanel = await Chanel.create({
+    if (!isGroup) {
+      const currentChat = await Chat.findOne({ participants });
+      if (currentChat) throw new ConflictError(conflictErrorText);
+    }
+
+    const chat = await Chat.create({
       name,
-      description,
-      owner,
+      participants,
       createdAt,
+      groupDetails: {
+        isGroup,
+        rights,
+        creator,
+      },
     });
 
-    return res.status(CREATED).send(chanel);
+    return res.status(CREATED).send(chat);
   } catch (err) {
     if (err.name === 'ValidationError') {
       return next(new BadRequestError(badRequestErrorText));
@@ -37,32 +52,28 @@ const createChanel = async (req, res, next) => {
   }
 };
 
-const getChanelList = async (req, res, next) => {
+const getChatList = async (req, res, next) => {
   try {
-    let chanels = await Chanel.find({});
+    let chats = await Chat.find({});
 
-    if (req.query.subscriptions) {
-      chanels = chanels.filter((item) => item.subscribers.includes(req.query.subscriptions));
+    if (req.query.participant) {
+      chats = chats.filter((item) => item.participants.includes(req.query.participant));
     }
-
-    if (req.query.name) {
-      chanels = chanels.filter((item) => item.name.includes(req.query.name));
-    }
-    chanels = sort(chanels);
-
-    return res.send(chanels);
+    chats = sortByTime(chats);
+    chats.populate('participants');
+    return res.send(chats);
   } catch (err) {
     return next(err);
   }
 };
 
-const getChanelCard = async (req, res, next) => {
+const getChatCard = async (req, res, next) => {
   try {
-    const chanel = await Chanel.findById(req.query.chanelId);
-    if (!chanel) {
+    const chat = await Chat.findById(req.query.chatId).populate('participants');
+    if (!chat) {
       throw new NotFoundError(notFoundErrorText);
     }
-    return res.send(chanel);
+    return res.send(chat);
   } catch (err) {
     if (err.name === 'ValidationError') {
       return next(new BadRequestError(badRequestErrorText));
@@ -74,18 +85,18 @@ const getChanelCard = async (req, res, next) => {
 const updatePhoto = async (req, res, next) => {
   try {
     const photo = req.file.path.split('\\').join('/');
-    const chanel = await Chanel.findById(req.query.chanelId);
-    if (!chanel) {
+    const chat = await Chat.findById(req.query.chatId);
+    if (!chat || !chat.groupDetails.isGroup) {
       throw new NotFoundError(notFoundErrorText);
     }
-    if (chanel.owner.toString() === req.user._id) {
-      await chanel.updateOne(
-        { photo },
-        { new: true, runValidators: true },
-      );
-      return res.send(chanel);
+    if (chat.groupDetails.rights && chat.groupDetails.creator !== req.user._id) {
+      throw new ForbiddenError(forbiddenErrorText);
     }
-    throw new ForbiddenError(forbiddenErrorText);
+    await chat.updateOne(
+      { photo },
+      { new: true, runValidators: true },
+    );
+    return res.send(chat);
   } catch (err) {
     if (err.name === 'ValidationError') {
       return next(new BadRequestError(badRequestErrorText));
@@ -94,21 +105,21 @@ const updatePhoto = async (req, res, next) => {
   }
 };
 
-const updateChanelInfo = async (req, res, next) => {
+const updateChatName = async (req, res, next) => {
   try {
-    const { chanelId, name, description } = req.body;
-    const chanel = await Chanel.findById(chanelId);
-    if (!chanel) {
+    const { chatId, name } = req.body;
+    const chat = await Chat.findById(chatId);
+    if (!chat && !chat.groupDetails.isGroup) {
       throw new NotFoundError(notFoundErrorText);
     }
-    if (chanel.owner.toString() === req.user._id) {
-      await chanel.updateOne(
-        { name, description },
-        { new: true, runValidators: true },
-      );
-      return res.send(chanel);
+    if (chat.groupDetails.rights && chat.groupDetails.creator !== req.user._id) {
+      throw new ForbiddenError(forbiddenErrorText);
     }
-    throw new ForbiddenError(forbiddenErrorText);
+    await chat.updateOne(
+      { name },
+      { new: true, runValidators: true },
+    );
+    return res.send(chat);
   } catch (err) {
     if (err.name === 'ValidationError') {
       return next(new BadRequestError(badRequestErrorText));
@@ -117,31 +128,24 @@ const updateChanelInfo = async (req, res, next) => {
   }
 };
 
-const updatePrivatSettings = async (req, res, next) => {
+const updateRights = async (req, res, next) => {
   try {
-    const {
-      chanelId,
-      comments,
-      sharing,
-      chanelInfo,
-    } = req.body;
+    const { chatId, rights } = req.body;
 
-    const chanel = await Chanel.findById(chanelId);
-    if (!chanel) {
+    const chat = await Chat.findById(chatId);
+    if (!chat && !chat.groupDetails.isGroup) {
       throw new NotFoundError(notFoundErrorText);
     }
-    if (chanel.owner.toString() === req.user._id) {
-      await chanel.updateOne(
+    if (chat.groupDetails.creator.toString() === req.user._id) {
+      await chat.updateOne(
         {
-          privatSettings: {
-            comments,
-            sharing,
-            chanelInfo,
+          groupDetails: {
+            rights,
           },
         },
         { new: true, runValidators: true },
       );
-      return res.send(chanel);
+      return res.send(chat);
     }
     throw new ForbiddenError(forbiddenErrorText);
   } catch (err) {
@@ -152,17 +156,21 @@ const updatePrivatSettings = async (req, res, next) => {
   }
 };
 
-const subscribe = async (req, res, next) => {
+const addParticipant = async (req, res, next) => {
   try {
-    const chanel = await Chanel.findByIdAndUpdate(
-      req.query.chanelId,
-      { $addToSet: { subscribers: req.user._id } },
-      { new: true },
-    );
-    if (!chanel) {
+    const { chatId, participant } = req.body;
+    const chat = await Chat.findById(chatId);
+    if (!chat && !chat.groupDetails.isGroup) {
       throw new NotFoundError(notFoundErrorText);
     }
-    return res.send(chanel);
+    if (chat.groupDetails.rights && chat.groupDetails.creator !== req.user._id) {
+      throw new ForbiddenError(forbiddenErrorText);
+    }
+    await chat.updateOne(
+      { $addToSet: { participants: participant } },
+      { new: true, runValidators: true },
+    );
+    return res.send(chat);
   } catch (err) {
     if (err.name === 'ValidationError') {
       return next(new BadRequestError(badRequestErrorText));
@@ -171,17 +179,21 @@ const subscribe = async (req, res, next) => {
   }
 };
 
-const unsubsxribe = async (req, res, next) => {
+const removeParticipant = async (req, res, next) => {
   try {
-    const chanel = await Chanel.findByIdAndUpdate(
-      req.query.chanelId,
-      { $pull: { subscribers: req.user._id } },
-      { new: true },
-    );
-    if (!chanel) {
+    const { chatId, participant } = req.body;
+    const chat = await Chat.findById(chatId);
+    if (!chat && !chat.groupDetails.isGroup) {
       throw new NotFoundError(notFoundErrorText);
     }
-    return res.send(chanel);
+    if (chat.groupDetails.rights && chat.groupDetails.creator !== req.user._id) {
+      throw new ForbiddenError(forbiddenErrorText);
+    }
+    await chat.updateOne(
+      { $pull: { participants: participant } },
+      { new: true, runValidators: true },
+    );
+    return res.send(chat);
   } catch (err) {
     if (err.name === 'ValidationError') {
       return next(new BadRequestError(badRequestErrorText));
@@ -190,15 +202,19 @@ const unsubsxribe = async (req, res, next) => {
   }
 };
 
-const deleteChanel = async (req, res, next) => {
+const deleteChat = async (req, res, next) => {
   try {
-    const chanel = await Chanel.findById(req.query.chanelId);
-    if (!chanel) {
+    const chat = await Chat.findById(req.query.chatId);
+    if (!chat) {
       throw new NotFoundError(notFoundErrorText);
     }
-    if (chanel.owner.toString() === req.user._id) {
-      await chanel.deleteOne();
-      return res.send('Канал успешно удален');
+    if (!chat.groupDetails.isGroup && chat.participants.includes(req.user._id)) {
+      await chat.deleteOne();
+      return res.send('Объект успешно удален');
+    }
+    if (chat.groupDetails.isGroup && chat.groupDetails.creator.toString() === req.user._id) {
+      await chat.deleteOne();
+      return res.send('Объект успешно удален');
     }
     throw new ForbiddenError(forbiddenErrorText);
   } catch (err) {
@@ -210,13 +226,13 @@ const deleteChanel = async (req, res, next) => {
 };
 
 module.exports = {
-  createChanel,
-  getChanelList,
-  getChanelCard,
+  createChat,
+  getChatList,
+  getChatCard,
   updatePhoto,
-  updateChanelInfo,
-  updatePrivatSettings,
-  subscribe,
-  unsubsxribe,
-  deleteChanel,
+  updateChatName,
+  updateRights,
+  addParticipant,
+  removeParticipant,
+  deleteChat,
 };

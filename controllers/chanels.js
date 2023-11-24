@@ -1,5 +1,5 @@
 const Chanel = require('../models/chanel');
-const sort = require('../middlewares/sort');
+const { sortByName } = require('../middlewares/sort');
 const {
   CREATED,
   badRequestErrorText,
@@ -48,7 +48,7 @@ const getChanelList = async (req, res, next) => {
     if (req.query.name) {
       chanels = chanels.filter((item) => item.name.includes(req.query.name));
     }
-    chanels = sort(chanels);
+    chanels = sortByName(chanels);
 
     return res.send(chanels);
   } catch (err) {

@@ -7,6 +7,7 @@ const usersRoutes = require('./users');
 const chanelsRoutes = require('./chanels');
 const postsRoutes = require('./posts');
 const commentsRoutes = require('./comments');
+const chatsRoutes = require('./chats');
 const auth = require('../middlewares/auth');
 const NotFoundError = require('../errors/NotFoundError');
 
@@ -17,6 +18,7 @@ routes.use('/user', usersRoutes);
 routes.use('/chanel', chanelsRoutes);
 routes.use('/post', postsRoutes);
 routes.use('/comment', commentsRoutes);
+routes.use('/chat', chatsRoutes);
 
 routes.use('*', (req, res, next) => {
   next(new NotFoundError('Страница не найдена'));

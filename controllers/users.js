@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
 const Chanel = require('../models/chanel');
-const sort = require('../middlewares/sort');
+const { sortByName } = require('../middlewares/sort');
 const { secretKey } = require('../utils/jwtConfig');
 
 const {
@@ -105,7 +105,7 @@ const getUsers = async (req, res, next) => {
     if (req.query.name) {
       users = users.filter((item) => item.name.includes(req.query.name));
     }
-    users = sort(users);
+    users = sortByName(users);
 
     return res.send(users);
   } catch (err) {
