@@ -13,10 +13,10 @@ const sortByName = (list) => {
 
 const sortByTime = (list) => {
   const sortedArr = list.sort((a, b) => {
-    if (Number(a.updatedAt) < Number(b.updatedAt)) {
+    if (Number(a.updatedAt) > Number(b.updatedAt)) {
       return -1;
     }
-    if (Number(a.updatedAt) > Number(b.updatedAt)) {
+    if (Number(a.updatedAt) < Number(b.updatedAt)) {
       return 1;
     }
     return 0;

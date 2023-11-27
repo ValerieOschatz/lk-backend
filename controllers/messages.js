@@ -51,8 +51,8 @@ const createMessage = async (req, res, next) => {
 
 const getMessageList = async (req, res, next) => {
   try {
-    let messages = await Message.find({}).populate('sender');
-    messages = messages.filter((item) => item.chat === req.query.chat);
+    let messages = await Message.find({}).populate(['sender', 'answerTo']);
+    messages = messages.filter((item) => item.chat.toString() === req.query.chat);
 
     return res.send(messages);
   } catch (err) {
@@ -79,12 +79,13 @@ const updateMessage = async (req, res, next) => {
   try {
     const { messageId, text } = req.body;
     const message = await Message.findById(messageId);
+    const isUpdated = true;
     if (!message) {
       throw new NotFoundError(notFoundErrorText);
     }
     if (message.sender.toString() === req.user._id) {
       await message.updateOne(
-        { text },
+        { text, isUpdated },
         { new: true, runValidators: true },
       );
       return res.send(message);
