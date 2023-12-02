@@ -6,9 +6,9 @@ const postSchema = new mongoose.Schema({
     default: '',
     maxlength: [80, ', поле должно содержать не более 80 символов'],
   },
-  photos: {
-    type: Array,
-    default: [],
+  photo: {
+    type: String,
+    default: '',
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,

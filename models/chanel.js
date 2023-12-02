@@ -32,12 +32,7 @@ const chanelSchema = new mongoose.Schema({
       enum: [0, 1],
       default: 0,
     },
-    sharing: {
-      type: Number,
-      enum: [0, 1],
-      default: 0,
-    },
-    chanelInfo: {
+    posts: {
       type: Number,
       enum: [0, 1],
       default: 0,

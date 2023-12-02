@@ -19,15 +19,11 @@ const createPost = async (req, res, next) => {
 
     const owner = req.user._id;
     const createdAt = Date.now();
-    let photos = [];
-
-    if (req.files) {
-      photos = req.files.map((file) => file.path.split('\\').join('/'));
-    }
+    const photo = req.file && req.file.path.split('\\').join('/');
 
     const post = await Post.create({
       text,
-      photos,
+      photo,
       ownerChanel,
       owner,
       createdAt,

@@ -13,7 +13,7 @@ const {
   deletePost,
 } = require('../controllers/posts');
 
-postRoutes.post('/create', upload.array('image'), createPost);
+postRoutes.post('/create', upload.single('image'), createPost);
 postRoutes.get('/list', getPostList);
 postRoutes.get('/card', getPostCard);
 postRoutes.patch('/text', updatePostText);

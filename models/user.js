@@ -45,12 +45,7 @@ const userSchema = new mongoose.Schema({
       enum: [0, 1],
       default: 0,
     },
-    sharing: {
-      type: Number,
-      enum: [0, 1],
-      default: 0,
-    },
-    profileInfo: {
+    posts: {
       type: Number,
       enum: [0, 1],
       default: 0,
