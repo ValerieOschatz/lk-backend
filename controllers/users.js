@@ -130,7 +130,7 @@ const getUser = async (req, res, next) => {
 
 const updatePhoto = async (req, res, next) => {
   try {
-    const photo = req.file.path.split('\\').join('/');
+    const photo = req.file && req.file.filename;
     const user = await User.findByIdAndUpdate(
       req.user._id,
       { photo },

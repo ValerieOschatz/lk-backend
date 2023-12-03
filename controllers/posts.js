@@ -19,7 +19,7 @@ const createPost = async (req, res, next) => {
 
     const owner = req.user._id;
     const createdAt = Date.now();
-    const photo = req.file && req.file.path.split('\\').join('/');
+    const photo = req.file && req.file.filename;
 
     const post = await Post.create({
       text,

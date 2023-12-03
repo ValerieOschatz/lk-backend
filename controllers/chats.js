@@ -84,7 +84,7 @@ const getChatCard = async (req, res, next) => {
 
 const updatePhoto = async (req, res, next) => {
   try {
-    const photo = req.file.path.split('\\').join('/');
+    const photo = req.file && req.file.filename;
     const chat = await Chat.findById(req.query.chatId);
     if (!chat || !chat.groupDetails.isGroup) {
       throw new NotFoundError(notFoundErrorText);
