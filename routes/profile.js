@@ -16,7 +16,6 @@ const {
 
 const {
   validateUpdateProfileInfo,
-  validateUpdatePrivatSettigs,
   validateUpdateLogin,
   validateUpdatePassword,
   validateCheckUser,
@@ -25,7 +24,7 @@ const {
 profileRoutes.get('/me', getProfile);
 profileRoutes.patch('/photo', upload.single('image'), updatePhoto);
 profileRoutes.patch('/info', validateUpdateProfileInfo, updateProfileInfo);
-profileRoutes.patch('/privat-settings', validateUpdatePrivatSettigs, updatePrivatSettings);
+profileRoutes.patch('/privat-settings', updatePrivatSettings);
 profileRoutes.patch('/login', validateUpdateLogin, updateLogin);
 profileRoutes.patch('/password', validateUpdatePassword, updatePassword);
 profileRoutes.put('/subscribe', validateCheckUser, subscribe);

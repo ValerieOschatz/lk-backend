@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const messageSchema = new mongoose.Schema({
   text: {
     type: String,
-    maxlength: [80, ', поле должно содержать не более 80 символов'],
+    maxlength: [500, ', поле должно содержать не более 500 символов'],
     required: true,
   },
   answerTo: {

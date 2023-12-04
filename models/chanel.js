@@ -13,7 +13,7 @@ const chanelSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    maxlength: [30, 'поле description должно содержать не более 30 символов'],
+    maxlength: [50, 'поле description должно содержать не более 50 символов'],
     default: '',
   },
   owner: {

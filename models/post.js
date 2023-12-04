@@ -4,7 +4,7 @@ const postSchema = new mongoose.Schema({
   text: {
     type: String,
     default: '',
-    maxlength: [80, ', поле должно содержать не более 80 символов'],
+    maxlength: [500, ', поле должно содержать не более 80 символов'],
   },
   photo: {
     type: String,
