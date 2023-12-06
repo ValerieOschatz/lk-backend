@@ -122,8 +122,7 @@ const updatePrivatSettings = async (req, res, next) => {
     const {
       chanelId,
       comments,
-      sharing,
-      chanelInfo,
+      posts,
     } = req.body;
 
     const chanel = await Chanel.findById(chanelId);
@@ -135,8 +134,7 @@ const updatePrivatSettings = async (req, res, next) => {
         {
           privatSettings: {
             comments,
-            sharing,
-            chanelInfo,
+            posts,
           },
         },
         { new: true, runValidators: true },

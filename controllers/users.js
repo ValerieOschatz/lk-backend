@@ -172,8 +172,7 @@ const updatePrivatSettings = async (req, res, next) => {
   try {
     const {
       comments,
-      sharing,
-      profileInfo,
+      posts,
     } = req.body;
 
     const user = await User.findByIdAndUpdate(
@@ -181,8 +180,7 @@ const updatePrivatSettings = async (req, res, next) => {
       {
         privatSettings: {
           comments,
-          sharing,
-          profileInfo,
+          posts,
         },
       },
       { new: true, runValidators: true },
