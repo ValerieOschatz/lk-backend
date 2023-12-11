@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const commentSchema = new mongoose.Schema({
   text: {
     type: String,
-    maxlength: [500, ', поле должно содержать не более 500 символов'],
+    maxlength: [150, ', поле должно содержать не более 150 символов'],
     required: true,
   },
   post: {

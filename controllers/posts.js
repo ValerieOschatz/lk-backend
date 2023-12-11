@@ -100,7 +100,7 @@ const updatePostText = async (req, res, next) => {
 const addLike = async (req, res, next) => {
   try {
     const post = await Post.findByIdAndUpdate(
-      req.query.postId,
+      req.body.postId,
       { $addToSet: { likes: req.user._id } },
       { new: true },
     );

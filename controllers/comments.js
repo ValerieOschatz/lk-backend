@@ -41,6 +41,7 @@ const createComment = async (req, res, next) => {
 const getCommentList = async (req, res, next) => {
   try {
     let comments = await Comment.find({}).populate(['owner', 'answerTo']);
+    comments.reverse();
 
     if (req.query.post) {
       comments = comments.filter((item) => item.post._id.toString() === req.query.post);
@@ -93,7 +94,7 @@ const updateComment = async (req, res, next) => {
 const addLike = async (req, res, next) => {
   try {
     const comment = await Comment.findByIdAndUpdate(
-      req.query.commentId,
+      req.body.commentId,
       { $addToSet: { likes: req.user._id } },
       { new: true },
     );
