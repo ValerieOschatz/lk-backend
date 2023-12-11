@@ -1,4 +1,5 @@
 const Post = require('../models/post');
+const Comment = require('../models/comment');
 const {
   CREATED,
   badRequestErrorText,
@@ -142,6 +143,7 @@ const deletePost = async (req, res, next) => {
       throw new NotFoundError(notFoundErrorText);
     }
     if (post.owner.toString() === req.user._id) {
+      await Comment.deleteMany({ post: req.query.postId });
       await post.deleteOne();
       return res.send('Пост успешно удален');
     }
