@@ -103,7 +103,8 @@ const getUsers = async (req, res, next) => {
     }
 
     if (req.query.name) {
-      users = users.filter((item) => item.name.includes(req.query.name));
+      users = users.filter((item) => item.name.includes(req.query.name)
+      && item._id.toString() !== req.user._id);
     }
     users = sortByName(users);
 
@@ -249,7 +250,7 @@ const updatePassword = async (req, res, next) => {
 const subscribe = async (req, res, next) => {
   try {
     const user = await User.findByIdAndUpdate(
-      req.query.userId,
+      req.body.userId,
       { $addToSet: { subscribers: req.user._id } },
       { new: true },
     );
