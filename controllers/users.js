@@ -103,7 +103,9 @@ const getUsers = async (req, res, next) => {
     }
 
     if (req.query.name) {
-      users = users.filter((item) => item.name.includes(req.query.name)
+      let searchedName = req.query.name;
+      searchedName = searchedName.toLowerCase();
+      users = users.filter((item) => item.name.toLowerCase().includes(searchedName)
       && item._id.toString() !== req.user._id);
     }
     users = sortByName(users);
