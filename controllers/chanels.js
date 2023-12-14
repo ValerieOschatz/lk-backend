@@ -41,6 +41,10 @@ const getChanelList = async (req, res, next) => {
   try {
     let chanels = await Chanel.find({});
 
+    if (req.query.owner) {
+      chanels = chanels.filter((item) => item.owner.toString() === req.query.owner);
+    }
+
     if (req.query.subscriptions) {
       chanels = chanels.filter((item) => item.subscribers.includes(req.query.subscriptions));
     }
