@@ -157,7 +157,7 @@ const updatePrivatSettings = async (req, res, next) => {
 const subscribe = async (req, res, next) => {
   try {
     const chanel = await Chanel.findByIdAndUpdate(
-      req.query.chanelId,
+      req.body.chanelId,
       { $addToSet: { subscribers: req.user._id } },
       { new: true },
     );
