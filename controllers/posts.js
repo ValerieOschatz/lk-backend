@@ -54,6 +54,15 @@ const getPostList = async (req, res, next) => {
       && item.ownerChanel._id.toString() === req.query.ownerChanel);
     }
 
+    if (req.query.tape) {
+      posts = posts.filter((item) => {
+        if (item.ownerChanel) {
+          return item.ownerChanel.subscribers.includes(req.user._id);
+        }
+        return item.owner.subscribers.includes(req.user._id);
+      });
+    }
+
     return res.send(posts);
   } catch (err) {
     return next(err);
