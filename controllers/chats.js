@@ -1,4 +1,5 @@
 const Chat = require('../models/chat');
+const Message = require('../models/message');
 const { sortByTime } = require('../middlewares/sort');
 
 const {
@@ -224,10 +225,12 @@ const deleteChat = async (req, res, next) => {
       throw new NotFoundError(notFoundErrorText);
     }
     if (!chat.groupDetails.isGroup && chat.participants.includes(req.user._id)) {
+      await Message.deleteMany({ chat: req.query.chatId });
       await chat.deleteOne();
       return res.send('Объект успешно удален');
     }
     if (chat.groupDetails.isGroup && chat.groupDetails.creator.toString() === req.user._id) {
+      await Message.deleteMany({ chat: req.query.chatId });
       await chat.deleteOne();
       return res.send('Объект успешно удален');
     }

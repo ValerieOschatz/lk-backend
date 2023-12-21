@@ -53,6 +53,7 @@ const getMessageList = async (req, res, next) => {
   try {
     let messages = await Message.find({}).populate(['sender', 'answerTo']);
     messages = messages.filter((item) => item.chat.toString() === req.query.chat);
+    messages.reverse();
 
     return res.send(messages);
   } catch (err) {
