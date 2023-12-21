@@ -6,6 +6,7 @@ const chatsRoutes = express.Router();
 const {
   createChat,
   getChatList,
+  checkChat,
   getChatCard,
   updatePhoto,
   updateChatName,
@@ -17,6 +18,7 @@ const {
 
 chatsRoutes.post('/create', createChat);
 chatsRoutes.get('/list', getChatList);
+chatsRoutes.get('/check', checkChat);
 chatsRoutes.get('/card', getChatCard);
 chatsRoutes.patch('/photo', upload.single('image'), updatePhoto);
 chatsRoutes.patch('/name', updateChatName);

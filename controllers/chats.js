@@ -56,12 +56,25 @@ const getChatList = async (req, res, next) => {
   try {
     let chats = await Chat.find({}).populate('participants');
 
-    if (req.query.participant) {
-      // eslint-disable-next-line max-len
-      chats = chats.filter((item) => item.participants.find((el) => el._id.toString() === req.query.participant));
-    }
+    // eslint-disable-next-line max-len
+    chats = chats.filter((item) => item.participants.find((el) => el._id.toString() === req.user._id));
+
     chats = sortByTime(chats);
     return res.send(chats);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const checkChat = async (req, res, next) => {
+  try {
+    const chats = await Chat.find({});
+
+    const chat = chats.find((item) => !item.groupDetails.isGroup
+      && item.participants.find((el) => el._id.toString() === req.user._id)
+      && item.participants.find((el) => el._id.toString() === req.query.participant));
+
+    return res.send(chat);
   } catch (err) {
     return next(err);
   }
@@ -230,6 +243,7 @@ const deleteChat = async (req, res, next) => {
 module.exports = {
   createChat,
   getChatList,
+  checkChat,
   getChatCard,
   updatePhoto,
   updateChatName,
