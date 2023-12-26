@@ -40,6 +40,7 @@ const createMessage = async (req, res, next) => {
       { new: true, runValidators: true },
     );
 
+    global.io.to(message.chat.toString()).emit('chatMessage');
     return res.status(CREATED).send(message);
   } catch (err) {
     if (err.name === 'ValidationError') {
@@ -89,6 +90,8 @@ const updateMessage = async (req, res, next) => {
         { text, isUpdated },
         { new: true, runValidators: true },
       );
+
+      global.io.to(message.chat.toString()).emit('chatMessage');
       return res.send(message);
     }
     throw new ForbiddenError(forbiddenErrorText);
@@ -108,6 +111,7 @@ const deleteMessage = async (req, res, next) => {
     }
     if (message.sender.toString() === req.user._id) {
       await message.deleteOne();
+      global.io.to(message.chat.toString()).emit('chatMessage');
       return res.send('Объект успешно удален');
     }
     throw new ForbiddenError(forbiddenErrorText);
