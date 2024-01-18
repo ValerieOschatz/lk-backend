@@ -31,7 +31,7 @@ app.use(limiter);
 app.use(cookieParser());
 app.use(cors);
 app.use(express.static(`${__dirname}/uploads`));
-app.use(express.json(), routes);
+app.use('/api', express.json(), routes);
 app.use(errorLogger);
 app.use(errors());
 app.use(defaultError);
