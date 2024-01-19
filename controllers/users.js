@@ -62,8 +62,8 @@ const loginProfile = async (req, res, next) => {
       { expiresIn: '7d' },
     );
     return res.cookie('jwt', token, {
-      httpOnly: true,
-      sameSite: 'none',
+      // httpOnly: true,
+      // sameSite: 'none',
       maxAge: 3600000 * 24 * 7,
     }).send({ token });
   } catch (err) {
