@@ -62,7 +62,7 @@ const loginProfile = async (req, res, next) => {
       { expiresIn: '7d' },
     );
     return res.cookie('jwt', token, {
-      // httpOnly: true,
+      httpOnly: true,
       // sameSite: 'none',
       maxAge: 3600000 * 24 * 7,
     }).send({ token });
@@ -289,7 +289,7 @@ const unsubsxribe = async (req, res, next) => {
 const logout = (req, res, next) => {
   try {
     return res.clearCookie('jwt', {
-      // httpOnly: true,
+      httpOnly: true,
       // sameSite: 'none',
     }).send({ message: 'Выход' });
   } catch (err) {
