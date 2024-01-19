@@ -290,7 +290,6 @@ const logout = (req, res, next) => {
   try {
     return res.clearCookie('jwt', {
       httpOnly: true,
-      secure: true,
       sameSite: 'none',
     }).send({ message: 'Выход' });
   } catch (err) {
