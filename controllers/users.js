@@ -289,8 +289,8 @@ const unsubsxribe = async (req, res, next) => {
 const logout = (req, res, next) => {
   try {
     return res.clearCookie('jwt', {
-      httpOnly: true,
-      sameSite: 'none',
+      // httpOnly: true,
+      // sameSite: 'none',
     }).send({ message: 'Выход' });
   } catch (err) {
     return next(err);
